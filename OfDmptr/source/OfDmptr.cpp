@@ -37,6 +37,10 @@ uintptr_t displayableUserId = std::stoull(userid_str, nullptr, 0);
 auto id_str = cPlaceId();
 uintptr_t id = std::stoull(id_str, nullptr, 0);
 
+
+// this is the main function where everything starts
+int main() {
+
 HWND hwnd = FindWindowA(nullptr, xorstr_("Roblox"));
 DWORD procId = 0;
 if (hwnd) {
@@ -44,10 +48,6 @@ if (hwnd) {
     Globals::state.windowHandle = hwnd;
     Globals::state.processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procId);
 }
-
-
-// this is the main function where everything starts
-int main() {
 
     if (!Globals::state.windowHandle) {
         std::cerr << xorstr_("[-] Failed to find Roblox") << std::endl;
