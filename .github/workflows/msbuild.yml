@@ -37,22 +37,23 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
-    - name: install zlib with vcpkg uwu
-      run: .\vcpkg\vcpkg.exe install zlib:x64-windows
+    - name: install zlib + curl with vcpkg uwu
+      run: .\vcpkg\vcpkg.exe install zlib:x64-windows curl:x64-windows
 
     - name: restore nuget packages :3
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: build with msbuild and zlib support~ 💜
+    - name: build with msbuild and zlib/curl support~ 💜
       run: |
-        $zlibInclude = "${{github.workspace}}\vcpkg\installed\x64-windows\include"
-        $zlibLib = "${{github.workspace}}\vcpkg\installed\x64-windows\lib"
-        echo "ZLIB INCLUDE: $zlibInclude"
-        echo "ZLIB LIB: $zlibLib"
+        $vcpkgRoot = "${{github.workspace}}\vcpkg\installed\x64-windows"
+        $includeDir = "$vcpkgRoot\include"
+        $libDir = "$vcpkgRoot\lib"
+        echo "INCLUDE DIR: $includeDir"
+        echo "LIB DIR: $libDir"
         msbuild /m `
                 /p:Configuration=${{env.BUILD_CONFIGURATION}} `
                 /p:Platform=x64 `
-                /p:AdditionalIncludeDirectories="$zlibInclude" `
-                /p:AdditionalLibraryDirectories="$zlibLib" `
-                /p:AdditionalDependencies="zlib.lib" `
+                /p:AdditionalIncludeDirectories="$includeDir" `
+                /p:AdditionalLibraryDirectories="$libDir" `
+                /p:AdditionalDependencies="zlib.lib;libcurl.lib" `
                 ${{env.SOLUTION_FILE_PATH}}
