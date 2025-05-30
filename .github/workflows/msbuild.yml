@@ -26,28 +26,33 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: checkout code nya~
+      uses: actions/checkout@v4
 
-    - name: Add MSBuild to PATH
+    - name: add msbuild to path rawr~
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Install vcpkg
+    - name: install vcpkg nya~
       run: |
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
-    - name: Install zlib via vcpkg
+    - name: install zlib with vcpkg uwu
       run: .\vcpkg\vcpkg.exe install zlib:x64-windows
 
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+    - name: restore nuget packages :3
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+    - name: build with msbuild and zlib support~ 💜
       run: |
-        msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} `
-                /p:VcpkgRoot=${{github.workspace}}/vcpkg `
-                /p:VcpkgTriplet=x64-windows `
-                /p:AdditionalLibPaths=${{github.workspace}}/vcpkg/installed/x64-windows/lib `
+        $zlibInclude = "${{github.workspace}}\vcpkg\installed\x64-windows\include"
+        $zlibLib = "${{github.workspace}}\vcpkg\installed\x64-windows\lib"
+        echo "ZLIB INCLUDE: $zlibInclude"
+        echo "ZLIB LIB: $zlibLib"
+        msbuild /m `
+                /p:Configuration=${{env.BUILD_CONFIGURATION}} `
+                /p:Platform=x64 `
+                /p:AdditionalIncludeDirectories="$zlibInclude" `
+                /p:AdditionalLibraryDirectories="$zlibLib" `
+                /p:AdditionalDependencies="zlib.lib" `
                 ${{env.SOLUTION_FILE_PATH}}
